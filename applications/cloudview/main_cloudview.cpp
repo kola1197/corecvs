@@ -82,6 +82,8 @@ int main(int argc, char *argv[])
                 /** Load Materials **/
                 std::string mtlFile = path.substr(0, path.length() - 4) + ".mtl";
                 std::ifstream materialFile;
+
+                cout << "Loading material from <"  << mtlFile << ">" << endl;
                 materialFile.open(mtlFile, std::ios::in);
                 if (materialFile.good())
                 {
@@ -94,8 +96,16 @@ int main(int argc, char *argv[])
                 materialFile.close();
 
                 /** Load actual data **/
+                cout << "Loading geometry from <"  << path <<  ">" << endl;
+
                 std::ifstream file;
                 file.open(path, std::ios::in);
+                if (file.fail())
+                {
+                    SYNC_PRINT(("main(): Can't open mesh file <%s> for reading\n", path.c_str()));
+                    return false;
+                }
+
                 objLoader.loadOBJ(file, *mesh);
                 file.close();
             } else {
@@ -112,6 +122,28 @@ int main(int argc, char *argv[])
             shaded->prepareMesh(&mainWindow);
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>(shaded));
         }
+    }
+
+    {
+        Mesh3DScene *mesh = new Mesh3DScene;
+
+        mesh->switchColor();
+
+       // mesh->mulTransform(Vector3dd::Zero());
+
+        mesh->setColor(RGBColor::Yellow());
+        mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
+
+        mesh->setColor(RGBColor::Blue());
+        mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
+        mesh->popTransform();
+
+        //mesh->dumpPLY("out2.ply");
+
+        mainWindow.setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+
     }
 
     app.exec();

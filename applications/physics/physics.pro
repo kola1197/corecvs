@@ -18,31 +18,45 @@ include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR a
 QT += serialport
 
 INCLUDEPATH += .
+INCLUDEPATH += joystick
+INCLUDEPATH += radio
+
 
 HEADERS += \
     physicsMainWidget.h \
-    clientsender.h \
-    controllrecord.h \
-    joystickinput.h \
-    qcomcontroller.h \
     simulation.h \
-    simobject.h \
-    simsphere.h
+    clientSender.h \
+    joystickInput.h \
+    qComController.h \
+    simObject.h \
+    simSphere.h \
+    controlRecord.h \
+    joystick/joystickInterface.h \
+    joystick/JoystickOptionsWidget.h \
+    radio/frSkyMultimodule.h \
+    mainObject.h \
+    copterInputsWidget.h
 
 SOURCES += \
-    main_physics.cpp \
     physicsMainWidget.cpp \
-    clientsender.cpp \
-    controllrecord.cpp \
-    joystickinput.cpp \
-    qcomcontroller.cpp \
     simulation.cpp \
-    simobject.cpp \
-    simsphere.cpp
-
+    simSphere.cpp \
+    simObject.cpp \
+    qComController.cpp \
+    joystickInput.cpp \
+    clientSender.cpp \
+    mainPhysics.cpp \
+    controlRecord.cpp \  
+    joystick/joystickInterface.cpp \
+    joystick/JoystickOptionsWidget.cpp \
+    radio/frSkyMultimodule.cpp \
+    mainObject.cpp \
+    copterInputsWidget.cpp
 
 FORMS += \
-    physicsMainWidget.ui
+    physicsMainWidget.ui \
+    joystick/JoystickOptionsWidget.ui \
+    copterInputsWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 
