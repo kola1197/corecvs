@@ -40,6 +40,8 @@ class RGB24Buffer : public RGB24BufferBase,
 
 {
 public:
+    static const int CHANNELS = 3;
+
 //    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
     RGB24Buffer(const RGB24Buffer &that) : RGB24BufferBase (that) {}
     RGB24Buffer(RGB24Buffer *that) : RGB24BufferBase (that) {}
@@ -104,6 +106,8 @@ public:
      **/
     void drawPixel(int    x, int    y, const RGBColor &color);
     void drawPixel(double x, double y, const RGBColor &color);
+
+    void drawPixel(const Vector2dd &point, const RGBColor &color);
 
     /**
      * This function is used to draw a sort of marker over the buffer

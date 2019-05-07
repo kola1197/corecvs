@@ -125,6 +125,9 @@
         <file>joystick_error.png</file>
         <file>robot.png</file>
         <file>server_connect.png</file>
+        <file>radio_modern.png</file>
+        <file>transmit_blue.png</file>
+        <file>transmit.png</file>
     </qresource>
     <qresource prefix="/new/colors">
         <file>colors/color_blue.png</file>
@@ -177,5 +180,7 @@
         <file>shaders/_trivial.vsh</file>
         <file>shaders/default_fast.fsh</file>
         <file>shaders/default_fast.vsh</file>
+        <file>shaders/green.fsh</file>
+        <file>shaders/green.vsh</file>
     </qresource>
 </RCC>

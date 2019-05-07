@@ -18,10 +18,7 @@
 using namespace std;
 
 
-JoyStickInput::JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, int &_throttleValue,
-                             int &_CH5Value, int &_CH6Value, int &_CH7Value,  int &_CH8Value )
-    : yawValue(_yawValue) , rollValue(_rollValue), pitchValue(_pitchValue), throttleValue(_throttleValue),
-      CH5Value(_CH5Value), CH6Value(_CH6Value), CH7Value(_CH7Value), CH8Value(_CH8Value)
+JoyStickInput::JoyStickInput()
 {
     throttleValue=1239;
     // cout<<"AAAaaaAAA"<<endl;
@@ -29,6 +26,7 @@ JoyStickInput::JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, 
 
 void JoyStickInput::start()
 {
+    active=true;
     timerForThrottle();
     startJoyStickMode();
 }
@@ -153,7 +151,10 @@ void JoyStickInput::startJoyStickMode()
                     case 3:
                         usualExperimentalButtons(eventtt);
                         break;
-                    case 4:                                 //diff with 3 in timer thread
+                    case 4:                                 //diff with 3 or 4 is in the timer thread
+                        usualExperimentalButtons(eventtt);
+                        break;
+                    case 5:                                 //diff with 3 is in the timer thread
                         usualExperimentalButtons(eventtt);
                         break;
                     default: break;
@@ -179,7 +180,10 @@ void JoyStickInput::startJoyStickMode()
                         usualExperimentalSticks(eventtt);
                         break;
                     case 4:
-                        usualExperimentalSticks(eventtt);
+                        fullRtSticks(eventtt);
+                        break;
+                    case 5:
+                        extreamRtSticks(eventtt);
                         break;
 
                     default: break;
@@ -189,10 +193,28 @@ void JoyStickInput::startJoyStickMode()
                 default:
                     break;
                 }
+                updateOutput();
             }
         }
     });
     thr.detach();
+}
+
+void JoyStickInput::updateOutput()
+{
+    if (!mutexActive)
+    {
+        mutexActive=true;
+        output.axis[0]=throttleValue;
+        output.axis[1]=rollValue;
+        output.axis[2]=pitchValue;
+        output.axis[3]=yawValue;
+        output.axis[4]=CH5Value;
+        output.axis[5]=CH6Value;
+        output.axis[6]=CH7Value;
+        output.axis[7]=CH8Value;
+        mutexActive=false;
+    }
 }
 
 void JoyStickInput::usualButtons(js_event event)
@@ -838,11 +860,11 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==0)
             {
 
-                rollValue = 1500 + axes[axis].x/50/roll_const;
+                rollValue = 1500 + axes[axis].x/12/roll_const;
                 if (rollValue>2100){rollValue=2099;}
                 if (rollValue<900){rollValue=901;}
 
-                pitchValue = 1500 - axes[axis].y/50/pit_const;
+                pitchValue = 1500 - axes[axis].y/12/pit_const;
                 if (pitchValue>2100){pitchValue=2099;}
                 if (pitchValue<900){pitchValue=901;}
 
@@ -851,7 +873,7 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==1)
             {
                 lastLT=axes[axis].x;
-                yawValue = 1500 + axes[axis].y/50/roll_const;
+                yawValue = 1500 + axes[axis].y/12/roll_const;
                 if (yawValue>2100){yawValue=2099;}
                 if (yawValue<900){yawValue=901;}
 
@@ -867,7 +889,73 @@ void JoyStickInput::fullRtSticks(js_event event)
 }
 
 
+void JoyStickInput::extreamRtSticks(js_event event)
+{
+    const int thr_const=1;
+    const int roll_const=10;
+    const int pit_const=10;
+    const int yaw_const=10;
 
+    size_t axis;
+    switch (countOfSticks)
+    {
+    case 6:
+        axis = getAxisState(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+                pitchValue = 1500 - axes[axis].y/50/pit_const;
+                rollValue = 1500 + axes[axis].x/50/roll_const;
+                if (rollValue>2100){rollValue=2099;}
+                if (rollValue<900){rollValue=901;}
+                if (pitchValue>2100){pitchValue=2099;}
+                if (pitchValue<900){pitchValue=901;}
+
+            }
+            if (axis==1)
+            {
+                yawValue = 1500 + axes[axis].x/50/yaw_const;
+                if (yawValue>2100){yawValue=2099;}
+                if (yawValue<900){yawValue=901;}
+
+            }
+        }
+        break;
+    case 8:
+        axis = getAxisState(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+
+                rollValue = 1500 + axes[axis].x/6/roll_const;
+                if (rollValue>2100){rollValue=2099;}
+                if (rollValue<900){rollValue=901;}
+
+                pitchValue = 1500 - axes[axis].y/6/pit_const;
+                if (pitchValue>2100){pitchValue=2099;}
+                if (pitchValue<900){pitchValue=901;}
+
+
+            }
+            if (axis==1)
+            {
+                lastLT=axes[axis].x;
+                yawValue = 1500 + axes[axis].y/6/roll_const;
+                if (yawValue>2100){yawValue=2099;}
+                if (yawValue<900){yawValue=901;}
+
+            }
+            if (axis==2)
+            {
+
+                lastRT=axes[axis].y;
+            }
+        }
+        break;
+    }
+}
 
 
 
@@ -954,6 +1042,11 @@ void JoyStickInput::setRTLTFullMode()
 {
     currentMode=4;
 }
+
+void JoyStickInput::setRTLTExtreamMode()
+{
+    currentMode=5;
+}
 void JoyStickInput::timerForThrottle()
 {
     std::thread thr([this]()
@@ -972,7 +1065,7 @@ void JoyStickInput::timerForThrottle()
                 if (throttleValue>1800){throttleValue=1799;}
                 if (throttleValue<900){throttleValue=901;}
             }
-            if (currentMode==4)
+            if (currentMode==4 || currentMode==5)
             {
                 throttleValue=1300+(lastRT-lastLT)/85;
                 if (throttleValue>2100){throttleValue=2099;}

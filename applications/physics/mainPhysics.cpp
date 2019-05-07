@@ -6,6 +6,7 @@
 #include "core/geometry/mesh3DDecorated.h"
 #include "core/reflection/commandLineSetter.h"
 #include "core/buffers/bufferFactory.h"
+#include "core/stereointerface/dummyFlowProcessor.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
@@ -13,8 +14,11 @@
 #ifdef WITH_LIBPNG
 #include "libpngFileReader.h"
 #endif
+#ifdef WITH_OPENCV
+#include <KLTFlow.h>
+#endif
 
-#include "physicsMainWidget.h"
+#include "physicsMainWindow.h"
 
 using namespace corecvs;
 using namespace std;
@@ -63,6 +67,15 @@ int main(int argc, char *argv[])
 #endif
     QTRGB24Loader::registerMyself();
 
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>("Dummy"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
+
+#ifdef WITH_OPENCV
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, Processor6D  >("OpenCVProcessor"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
+#endif
+
+
     CommandLineSetter s(argc, argv);
     if (s.hasOption("caps"))
     {
@@ -73,8 +86,12 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Starting Physics...\n"));
     QApplication app(argc, argv);
 
-    PhysicsMainWidget mainWindow;
+    //PhysicsMainWidget mainWindowOld;
+    //mainWindowOld.show();
+
+    PhysicsMainWindow mainWindow;
     mainWindow.show();
+
     app.exec();
 
     SYNC_PRINT(("Exiting\n"));

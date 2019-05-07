@@ -33,7 +33,6 @@ vector<string> JoystickInterface::getDevices(const string &prefix)
         }
     }
     return toReturn;
-
 }
 
 JoystickConfiguration    JoystickInterface::getConfiguration(int joystickDevice)
@@ -185,6 +184,7 @@ void JoystickInterface::run()
         bool changed = false;
         if (event->type == JS_EVENT_BUTTON)
         {
+            //SYNC_PRINT(("JoystickInterface::run(): button event\n"));
             state.button[event->number] = event->value;
             newButtonEvent(event->number, event->value, event->time);
             changed = true;

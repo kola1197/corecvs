@@ -13,6 +13,13 @@ SimSphere::SimSphere(Vector3dd c, double r) :
 {
 }
 
+SimSphere::SimSphere(Vector3dd c, double r, corecvs::RGBColor col) :
+    SimObject(c),
+    radius(r)
+{
+    mainColour=col;
+}
+
 
 void SimSphere::saveMesh(const std::string &name)
 {
@@ -20,14 +27,16 @@ void SimSphere::saveMesh(const std::string &name)
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    Mesh3DScene *mesh = new Mesh3DScene;
+    Mesh3DScene *scene = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D();
+    scene->setMesh(mesh);
 
     mesh->switchColor();
 
     mesh->mulTransform(copterPos);
 
     mesh->setColor(RGBColor::Red());
-    mesh->addIcoSphere(coords, 2, 2);
+    mesh->addIcoSphere(position, 2, 2);
 
     mesh->popTransform();
 
@@ -37,29 +46,27 @@ void SimSphere::saveMesh(const std::string &name)
 }
 
 
-void SimSphere::drawMesh(Vector3dd coords, double radius)
+void SimSphere::drawMesh(Vector3dd coords, double radius, corecvs::RGBColor color)
 {
-    cout<<"here"<<endl;
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    Mesh3DScene *mesh = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D;
 
     mesh->switchColor();
 
     mesh->mulTransform(copterPos);
 
-    mesh->setColor(RGBColor::Red());
+    mesh->setColor(color);
     mesh->addIcoSphere(coords, 2, 2);
 
     mesh->popTransform();
 
     //mesh->dumpPLY(name+".ply");
-
     delete_safe(mesh);
 }
 
 void SimSphere::addToMesh(Mesh3D &mesh)
 {
-    mesh.addIcoSphere(coords, radius, 3);
+    mesh.addIcoSphere(position, radius, 3);
 }
