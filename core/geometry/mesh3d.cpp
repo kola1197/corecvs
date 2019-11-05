@@ -264,6 +264,19 @@ void Mesh3D::addLine(const Vector3dd &point1, const Vector3dd &point2)
 
 }
 
+void Mesh3D::addLineDash(const Vector3dd &point1, const Vector3dd &point2, double act, double deact)
+{
+    double d1 = (point2 - point1).l2Metric();
+    double l = 0;
+    Ray3d r = Ray3d::FromPoints(point1, point2);
+    r.normalise();
+
+    for (l = 0; l < d1; l += (act + deact))
+    {
+        addLine(r.getPoint(l), r.getPoint(l + act));
+    }
+}
+
 void Mesh3D::addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3)
 {
     int vectorIndex = (int)vertexes.size();
@@ -298,12 +311,14 @@ void Mesh3D::addFlatPolygon(const FlatPolygon &polygon)
 Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number) const
 {
     Vector3d32 facei = faces[number];
-    if (facei[0] >= vertexes.size() ||
-        facei[1] >= vertexes.size() ||
-        facei[2] >= vertexes.size() ) {
+#if 0
+    if ((size_t)facei[0] >= vertexes.size() ||
+        (size_t)facei[1] >= vertexes.size() ||
+        (size_t)facei[2] >= vertexes.size() ) {
         printf("Mesh3D::getFaceAsTrinagle(%d (of %d)):Internal Error : refers to vertexes [%d %d %d] (of %d)\n",
                number, faces.size(), facei[0], facei[1], facei[2], vertexes.size() );
     }
+#endif
     return Triangle3dd(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
 }
 

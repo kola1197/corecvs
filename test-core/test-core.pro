@@ -33,7 +33,8 @@ SOURCES += \
     eigen/main_test_eigen_integration.cpp \
     ultrasound/main_test_ultrasound_reconstruction.cpp \
     ultrasound/model.cpp \
-    ultrasound/imgreader.cpp
+    ultrasound/imgreader.cpp \
+    convexpolygon/convexDebug.cpp
 
 
 
@@ -43,7 +44,8 @@ HEADERS += \
     generated/testClass.h      \
     generated/testBlock.h      \
     ultrasound/model.h \
-    ultrasound/imgreader.h
+    ultrasound/imgreader.h \
+    convexpolygon/convexDebug.h
 
 SOURCES += \
    generated/testSubClass.cpp \
@@ -96,6 +98,7 @@ SOURCES += \
    #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests   
     fileformats/main_test_fileformats.cpp \
     filesystem/main_test_filesystem.cpp \
+    joystick/main_test_joystick.cpp \
    #filter_blocks/main_test_filter_blocks.cpp \           # TODO: can't build
 #    gaussianSolution/main_test_gaussianSolution.cpp \     # TODO: check it...
     geometry/main_test_geometry.cpp \
@@ -139,7 +142,6 @@ SOURCES += \
     deform/test_deform.cpp \
     camerafixture/main_test_camerafixture.cpp \
     renderer/main_test_renderer.cpp \
-    meshdraw/test_polymeshdraw.cpp \
     raytrace/main_test_raytrace.cpp \
     json/main_test_json.cpp \
     utils/main_test_utils.cpp \
@@ -161,4 +163,5 @@ SOURCES += \
     bspRenderer/bspRenderTest.cpp \
     bspRenderer/bspRenderer.cpp \
     mesh/main_test_mesh.cpp \
-
+    convexpolygon/main_test_convexpolygon.cpp \
+    convexduality/main_test_convexduality.cpp \
