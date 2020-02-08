@@ -6,7 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
- * Generated from draw3d.xml
+ * Generated from draw3dutils.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -16,7 +16,7 @@
 /*
  *  Embed includes.
  */
-#include "draw3dParameters.h"
+#include "core/xml/generated/draw3dParameters.h"
 /*
  *  Additional includes for Composite Types.
  */
@@ -33,8 +33,8 @@
 /*
  *  Additional includes for enum section.
  */
-#include "draw3dStyle.h"
-#include "draw3dTextureGen.h"
+#include "core/xml/generated/draw3dStyle.h"
+#include "core/xml/generated/draw3dTextureGen.h"
 
 /**
  * \brief draw 3d Camera Parameters 
@@ -359,7 +359,7 @@ public:
         return mDecalRightAlpha;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setFovH(double fovH)
     {
         mFovH = fovH;
@@ -485,7 +485,7 @@ public:
         mDecalRightAlpha = decalRightAlpha;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /** 
      * \brief Base Parameters 
      * Base Parameters 
@@ -634,6 +634,7 @@ template<class VisitorType>
         mDecalRightAlpha = decalRightAlpha;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const Draw3dCameraParameters &other) const 
     {
         if ( !(this->mFovH == other.mFovH)) return false;

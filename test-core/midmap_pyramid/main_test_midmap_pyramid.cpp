@@ -22,7 +22,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/cameracalibration/cameraModel.h"
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/simpleRenderer.h"
 
@@ -207,6 +207,8 @@ TEST(MidmapPyramid, testTexureDY)
     Mesh3DDecorated mesh;
     renderer.addTexture(&buffer, true);
 
+    mesh.materials.push_back(OBJMaterial());
+    mesh.materials.back().tex[OBJMaterial::TEX_AMBIENT] = bufferpic;
     mesh.currentTexture = 0;
     mesh.switchTextures(true);
     mesh.switchNormals(true);
@@ -215,7 +217,9 @@ TEST(MidmapPyramid, testTexureDY)
                       Vector3dd( 1,  0, 3), Vector2dd(1, 0.5),
                       Vector3dd(-1,  1, 3), Vector2dd(0, 1));*/
 
-
+    if (!mesh.verify()) {
+        cout << "Empty Mesh is corrupted" << endl;
+    }
 
     mesh.addTriangleT(Vector3dd(-1, 0.0, 5), Vector2dd(0, 0),
                       Vector3dd( 1, 0.0, 5), Vector2dd(1, 0),
@@ -225,6 +229,9 @@ TEST(MidmapPyramid, testTexureDY)
                       Vector3dd(-1, 0.5, 2), Vector2dd(0, 1),
                       Vector3dd( 1, 0.5, 2), Vector2dd(1, 1));
 
+    if (!mesh.verify()) {
+        cout << "Mesh is corrupted" << endl;
+    }
 
     renderer.render(&mesh, bufferpic);
     SYNC_PRINT(("Render done\n"));

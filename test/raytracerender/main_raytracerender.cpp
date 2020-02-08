@@ -1,9 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <QApplication>
-#include <QtCore>
-
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -11,12 +8,9 @@
 #include "libpngFileReader.h"
 #endif
 
-#include "qtFileLoader.h"
-
-
 #include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/renderer/simpleRenderer.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/fileformats/meshLoader.h"
 #include "core/fileformats/objLoader.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
@@ -39,8 +33,6 @@ extern void raytrace_scene_union_and_blend(void);
 
 int main(int argc, char **argv)
 {
-    QApplication a(argc, argv);
-
 #ifdef WITH_LIBJPEG
     LibjpegFileReader::registerMyself();
     SYNC_PRINT(("Libjpeg support on\n"));
@@ -49,7 +41,6 @@ int main(int argc, char **argv)
     LibpngFileReader::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
-    QTRGB24Loader::registerMyself();
 
     int scene = 5;
     if ( argc > 1) {

@@ -67,6 +67,27 @@ public:
 
    static Vector2dd intersect(const Segment2d &s1, const Segment2d &s2, bool &hasIntersection);
 
+   /**
+    * Check if given point lies on segment
+    * @see https://www.lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
+    */
+   bool containsPoint(const Vector2dd& point, const double tolerance = 1.0e-11) {
+       Vector2dd ab = this->b - this->a;
+       Vector2dd ac = point - this->a;
+       if (abs(ab.x() * ac.y() - ab.y() * ac.x()) >= tolerance) {  // <=> abs(cross(ab, ac)) >= tolerance
+           return false;
+       }
+
+       double KAC = ab & ac;
+       if (KAC < 0) return false;
+       if (KAC <= tolerance) return true;
+
+       double KAB = ab.l2Metric() * ab.l2Metric();
+       if (KAC > KAB) return false;
+       if (abs(KAC - KAB) < tolerance) return true;
+
+       return true;
+   }
 };
 
 
@@ -352,7 +373,7 @@ public:
         Vector3dd coef = intersectCoef(other);
         return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
     }
-    
+
     std::pair<Vector3dd, Vector3dd> pluckerize() const
     {
         Vector3dd an = a.normalised();
@@ -617,6 +638,11 @@ public:
        (*this) = FromSegment(segment);
     }
 
+    Line2d(const Vector2dd &point1, const Vector2dd &point2)
+    {
+       (*this) = FromSegment(Segment2d(point1, point2));
+    }
+
     /**
      *  Construct the Line form 2 points
      **/
@@ -785,6 +811,29 @@ public:
         return (d / lsq);
     }
 
+    Vector2dd projectPointTo(const Vector2dd &point) const
+    {
+        double d = pointWeight(point);
+        double l2 = normal().sumAllElementsSq();
+        double t = (d / l2);
+        return point - t * normal();
+    }
+
+    /**
+     *   projecting zero to the current line
+     **/
+    Vector2dd projectZeroTo() const
+    {
+        double l2 = normal().sumAllElementsSq();
+        double t = (last() / l2);
+        return - t * normal();
+    }
+
+    Ray2d toRay() const
+    {
+        return Ray2d::FromOriginAndDirection(projectZeroTo(), normal().leftNormal());
+    }
+
     bool isVertical() const
     {
         return (y() == 0.0);
@@ -793,6 +842,13 @@ public:
     bool isHorizontal() const
     {
         return (x() == 0.0);
+    }
+
+    /**
+     * Check if two lines overlap
+     */
+    bool overlapWith(const Line2d& other) {
+        return this->normal().normalised() == other.normal().normalised();
     }
 
     static Line2d FormNormal(const Vector2dd &normal)
@@ -810,6 +866,13 @@ public:
         double b = -z() / y();
 
         return Vector2dd(m, -b);
+    }
+
+    Vector2dd toDualS() const {
+        double l = z() + l2Metric();
+        double x1 = x() / l;
+        double y2 = y() / l;
+        return Vector2dd(x1, y2);
     }
 
     Vector3dd toDualP() const {

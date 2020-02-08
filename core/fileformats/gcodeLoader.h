@@ -8,7 +8,7 @@
 
 #include "core/utils/global.h"
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/geometry/polygons.h"
 
 #include "core/xml/generated/gCodeColoringSheme.h"
@@ -93,6 +93,7 @@ public:
     /* These hooks could either return true - then implemenation update the machine state */
     virtual bool gcodeHook    ( const GCodeProgram::Code &code );
 
+    virtual bool commentHook  (const std::string &text);
     virtual bool straightHook (int type, const MachineState &before, const MachineState &after) ;
     virtual bool arkHook      (const MachineState &before, const MachineState &after,
                                const PlaneFrame &frame, double maxArg);
@@ -106,7 +107,7 @@ public:
 class GCodeToMesh {
 public:
     bool trace = true;
-    int arcSteps = 10;
+    int arcSteps = 100;
 
 
 //    GCodeColoringSheme::GCodeColoringSheme coloring = GCodeColoringSheme::COLOR_FROM_SPEED;
@@ -132,16 +133,71 @@ public:
         virtual bool arkHook(const MachineState &before, const MachineState &after, const PlaneFrame &frame, double maxArg) override;
     };
 
-    //void setColor(Mesh3D &mesh, const MachineState &before, const MachineState &after);
+    class VinylCutterMeshInterpreter : public GCodeInterpreter {
+    public:
+      GCodeToMesh *parent = NULL;
+      Mesh3D *mesh = NULL;
+      double offset = 0.5;
+      Vector3dd tangent = Vector3dd();
+      Vector3dd knifePos = Vector3dd();
+
+      VinylCutterMeshInterpreter(GCodeToMesh *parent, Mesh3D *mesh, double offset) :
+            parent(parent),
+            mesh(mesh),
+            offset(offset)
+        {}
+
+    public:
+        virtual bool straightHook(int type, const MachineState &before, const MachineState &after) override;
+        virtual bool arkHook(const MachineState &before, const MachineState &after, const PlaneFrame &frame, double maxArg) override;
+    };
+
+    // void setColor(Mesh3D &mesh, const MachineState &before, const
+    // MachineState &after);
     int renderToMesh(const GCodeProgram &in, Mesh3D &mesh);
+    int renderToMesh(const GCodeProgram &in, Mesh3D &mesh, double offset);
 
 
 };
 
+class GCodeCompensator {
+   public:
+    GCodeCompensator();
+  GCodeProgram result = GCodeProgram();
 
-class GcodeLoader
-{
-public:
+    class VinylCutterCodeInterpreter : public GCodeInterpreter {
+       public:
+        GCodeProgram *result;
+
+        double bladeOffset;
+        double touchZ;
+
+      VinylCutterCodeInterpreter(GCodeProgram *result, double bladeOffset, double touchZ)
+        : bladeOffset(bladeOffset), touchZ(touchZ), result(result){};
+
+        Vector2dd tangent;
+
+        // GCodeInterpreter interface
+       public:
+        bool gcodeHook(const GCodeProgram::Code &c) override;
+        bool straightHook(int type, const MachineState &before,
+                          const MachineState &after) override;
+        bool arkHook(const MachineState &before, const MachineState &after,
+                     const PlaneFrame &frame, double maxArg) override;
+
+       private:
+        size_t step = 0;
+        int reboundStep = -1;
+        corecvs::Vector3dd reboundCenter;
+    };
+
+    void compensateDragKnife(const GCodeProgram &in, double offset, double touchZ);
+
+    virtual ~GCodeCompensator();
+};
+
+class GcodeLoader {
+   public:
     GcodeLoader();
     bool trace = false;
 
@@ -155,6 +211,7 @@ public:
 
 public:
     static vector<std::pair<char, double> > parseLine(const string &gline);
+    static vector<std::pair<char, double> > parseLine1(const string &gline);
 };
 
 } // namespace corecvs

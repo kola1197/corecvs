@@ -11,14 +11,103 @@
 
   <class name="OpenCV KLT Parameters">
 
-    <field type="double"      name="SelectorQuality"    defaultValue="0.01" />
-    <field type="double"      name="SelectorDistance"   defaultValue="10" />
-    <field type="int"         name="SelectorSize"       defaultValue="7" />
-    <field type="int"         name="UseHarris"          defaultValue="1" />
-    <field type="double"      name="HarrisK"            defaultValue="0.05" />
-    <field type="int"         name="kltSize"            defaultValue="4"  />
+    <field type="int"         name="MaxCorners"         defaultValue="4000"   min="0" max="1000000" />
+    <field type="double"      name="SelectorQuality"    defaultValue="0.01"  />
+    <field type="double"      name="SelectorDistance"   defaultValue="10"    />
+    <field type="int"         name="SelectorSize"       defaultValue="7"     />
+    <field type="int"         name="UseHarris"          defaultValue="1"     />
+    <field type="double"      name="HarrisK"            defaultValue="0.05"  />
+    <field type="int"         name="kltSize"            defaultValue="4"     />
+    <field type="bool"        name="trace"              defaultValue="false" />
+
 
   </class>
+
+
+  <class name="OpenCV Square Detector Parameters">
+    <field type="bool"        name="debug"              defaultValue="false"/>
+    <field type="int"         name="treshholdLevel"     defaultValue="4"   />
+    <field type="int"         name="cannyThreshold1"    defaultValue="5"   />
+    <field type="int"         name="cannyThreshold2"    defaultValue="50"  />
+    <field type="int"         name="cannyApperture"     defaultValue="5"   />
+    <field type="double"      name="maxCosineThreshold" defaultValue="0.3" />
+  </class>
+  
+  <class name="OpenCV Checker Board Detector Parameters">
+    <field type="bool"        name="debug"     defaultValue="false"/>
+    <field type="int"         name="height"    defaultValue="4"  />
+    <field type="int"         name="width"     defaultValue="5"  />
+
+    <field type="bool"        name="Adaptive Thresold"  defaultValue="true"/>
+    <field type="bool"        name="Normalize Image"    defaultValue="false"/>
+    <field type="bool"        name="Filter Quads"       defaultValue="true"/>
+    <field type="bool"        name="Fast Check"         defaultValue="false"/>
+
+    <field type="bool"        name="subpixel"     defaultValue="true"/>
+    <field type="int"         name="Subpixel Area H"     defaultValue="11"/>
+    <field type="int"         name="Subpixel Area W"     defaultValue="11"/>
+
+  </class>
+
+  <class name="Mesh Flow Draw Parameters">
+    <!-- int image_height,
+        int image_width, -->
+    <field type="int"    name="Grid Rows"            defaultValue="16"  min="0" max="1000" />
+    <field type="int"    name="Grid Columns"         defaultValue="16"  min="0" max="1000" />
+
+    <field type="int"    name="Ransac Grid Rows"     defaultValue="4"  min="0" max="1000" />
+    <field type="int"    name="Ransac Grid Columns"  defaultValue="4"  min="0" max="1000" />
+
+    <field type="int"    name="Median Filter Size H" defaultValue="5"  min="0" max="1000" />
+    <field type="int"    name="Median Filter Size W" defaultValue="5"  min="0" max="1000" />
+
+    <field type="int"    name="Max Feature Number"   defaultValue="50" min="0" max="10000" />
+
+    <field type="double" name="Feature Treshold"     defaultValue="10.0" min="0" max="10000"    step="0.1"/>
+  </class>
+
+  
+  <class name="dis Flow Parameters">
+    <field type="int"       name="sc_f"         defaultValue="5" min="2"    max="10000" step="1" comment="first (coarsest) scale" />
+    <field type="int"       name="sc_l"         defaultValue="3" min="2"    max="10000" step="1" comment="last (finest) scale" />
+    <field type="int"       name="maxiter"      defaultValue="12" min="2"    max="10000" step="1" comment="max. iterations on one scale" />
+    <field type="int"       name="miniter"      defaultValue="12" min="2"    max="10000" step="1" comment="min. iterations on one scale" />
+
+    <field type="double"    name="mindprate"    defaultValue="0.05" min="0"    max="1" step="0.01" comment="minimum rate of change of delta_p before descending one level, e.g. .1 :  change scales when norm(delta_p_last)/norm(delta_p_init) &lt; .1" />
+    <field type="double"    name="mindrrate"    defaultValue="0.95" min="0"    max="1" step="0.01" comment="minimum rate of change of residual within 3-iterations-window before descending one level, e.g. .8 :  res_new/res_old >  * .8, SET HIGH (1e10) TO DISABLE"/>
+    <field type="double"    name="minimgerr"    defaultValue="0.00" min="0"    max="1" step="0.01" comment="if (mean absolute) residual falls below this threshold, terminate iterations on current scale, IGNORES MIN_ITER , SET TO LOW (1e-10) TO DISABLE"/>
+
+    <field type="int"       name="patchsz"      defaultValue="8" min="2"    max="10000" step="1" comment="patch size (edge length in pixels)"/>
+    <field type="double"    name="poverl"       defaultValue="0.4" min="2"    max="10000" step="1" comment="Patch overlap"/>
+
+    <field type="int"       name="usefbcon"     defaultValue="0" min="0"    max="10" step="1"      comment="use forward-backward flow merging"/>
+    <field type="int"       name="patnorm"      defaultValue="1" min="0"    max="10" step="1"      comment="Use patch mean-normalization"/>
+    
+    <field type="int"       name="costfct"      defaultValue="0" min="0"    max="2" step="1"       comment="Cost function: 0: L2-Norm, 1: L1-Norm, 2: PseudoHuber-Norm"/>
+
+    <field type="int"       name="usetvref"     defaultValue="1" min="2"    max="10000" step="1" comment="TV parameters"/>
+
+    <field type="double"    name="tv_alpha"     defaultValue="10.0" min="0"    max="1000" step="0.5"/>
+    <field type="double"    name="tv_gamma"     defaultValue="10.0" min="0"    max="1000" step="0.5"/>
+    <field type="double"    name="tv_delta"     defaultValue="5.0"  min="0"    max="1000" step="0.5"/>
+
+    <field type="int"       name="tv_innerit"   defaultValue="1"   min="0"    max="100" step="0.1"/>
+    <field type="int"       name="tv_solverit"  defaultValue="3"   min="0"    max="100" step="0.1"/>
+    <field type="double"    name="tv_sor"       defaultValue="1.6" min="0"    max="100" step="0.1" comment="Successive-over-relaxation weight"/>
+
+    <field type="int"       name="verbosity"    defaultValue="2" min="0"    max="4" step="1"       comment="Verbosity, 0: plot nothing, 1: final internal timing 2: complete iteration timing, (UNCOMMENTED -> 3: Display flow scales, 4: Display flow scale iterations)"/>
+  </class>
+
+  <class name="OpenCV PCA Flow Parameters">
+    <field type="double" name="Sparse Rate"               defaultValue="0.024"   min="0"    max="0.1" step="0.001"   comment="Controls density of sparse matches. "/>
+    <field type="double" name="Retained corners fraction" defaultValue="0.2"     min="0"    max="1.0" step="0.001"   comment="Retained corners fraction. "/>
+    <field type="double" name="Occlusions threshold"      defaultValue="0.0003"  min="0"    max="100" step="0.0001"  comment="Occlusion threshold. "/>
+    <field type="double" name="Damping factor"            defaultValue="0.00002" min="0"    max="100" step="0.00001" comment="Regularization term for solving least-squares. It is not related to the prior regularization."/>
+    <field type="int"    name="Clahe clip"                defaultValue="14"      min="-100" max="100" step="0.5"     comment="Clip parameter for CLAHE. "/>
+    <field type="int"    name="Basis height"              defaultValue="18"      min="0"    max="1000" step="1"      comment="Number of basis vectors."/>
+    <field type="int"    name="Basis width"               defaultValue="14"      min="0"    max="1000" step="1"      comment="Number of basis vectors."/>
+  </class>
+
 
 
 </poco>

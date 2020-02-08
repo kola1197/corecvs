@@ -205,7 +205,7 @@ RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
     unsigned long int w = 0;
     RGB48Buffer *result = NULL;
     uint8_t type;
-    unsigned short int maxval;
+    unsigned short int maxval = 0;
     bool calcWhite = false;
     int white = 0;
 
@@ -655,8 +655,8 @@ int PPMLoader::save(const string& name, RGB48Buffer *buffer, MetaData* metadata,
     header.w = buffer->w;
 
     int maxval = 0;
-    for (ulong i = 0; i < header.h; i++)
-        for (ulong j = 0; j < header.w; j++)
+    for (unsigned long i = 0; i < header.h; i++)
+        for (unsigned long j = 0; j < header.w; j++)
         {
             auto &pixel = buffer->element(i, j);
             if (pixel.r() > maxval) maxval = pixel.r();

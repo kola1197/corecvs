@@ -117,6 +117,25 @@ std::vector<string> stringSplit(const string &s, char delim)
     return elems;
 }
 
+std::vector<string> stringSplit(const string &s, const std::string &delim)
+{
+    std::vector<string> elems;
+    size_t pos = 0;
+    while(pos < s.size()) {
+        size_t pos1 = s.find_first_of(delim, pos);
+
+        if (pos1 == s.npos) {
+            pos1 = s.length();
+        }
+        if (pos != pos1) {
+            elems.push_back(s.substr(pos, pos1-pos));
+        }
+        pos = pos1 + 1;
+    }
+    return elems;
+}
+
+
 std::string stringCombine(std::vector<std::string> parts, char delim)
 {
     std::string toReturn;
@@ -198,67 +217,7 @@ string unescapeString(const string &s, const std::unordered_map<char, char> &sym
     return out.str();
 }
 
-std::string addFileExtIfNotExist(const std::string &fileName, const std::string &ext)
-{
-    return endsWith(fileName, ext) ? fileName : fileName + ext;
-}
 
-std::string getDirectory(const std::string &absoluteFilePath)
-{
-    CORE_ASSERT_TRUE_S(!absoluteFilePath.empty());
-
-    fs::path filePath(absoluteFilePath);
-    return fs::absolute(filePath.parent_path()).string();
-}
-
-std::string getFileName(const std::string &fileName)
-{
-    fs::path filePath(fileName);
-    return filePath.filename().string();
-}
-
-std::string concatPath(const std::string &path1, const std::string &path2)
-{
-   return (fs::path(path1) / fs::path(path2)).string();
-}
-
-bool isAbsolutePath(const std::string &path)
-{
-   return fs::path(path).is_absolute();
-}
-
-bool pathExists(const std::string &path)
-{
-    return fs::exists(path);
-}
-
-bool pathRemove(const std::string &path)
-{
-    fs::path p(path);
-    if (fs::exists(p))
-        return fs::remove(p);
-    return false;
-}
-
-std::string getFileNameIfExist(const std::string &fileName, const std::string &relativePath)
-{
-    fs::path filePath(fileName);
-    if (fs::exists(filePath))
-        return fileName;
-
-    fs::path infoNew = fs::path(relativePath) / fs::path(fileName); /* this is concatenation */
-    if (fs::exists(infoNew))
-        return fs::absolute(infoNew).string();
-
-    std::cout << "couldn't locate <" << fileName << "> with relativePath:" << relativePath << std::endl;
-    return "";
-}
-
-bool isDirectory(const std::string &path)
-{
-    fs::path filePath(path);
-    return fs::is_directory(filePath);
-}
 
 int parseInt (const std::string &c, bool *ok, size_t *endPos)
 {

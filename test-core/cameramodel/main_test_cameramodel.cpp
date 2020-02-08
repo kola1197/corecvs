@@ -27,7 +27,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/math/mathUtils.h"
 #include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 
 using corecvs::G12Buffer;
@@ -234,6 +234,28 @@ TEST(Cameramodel, newPinholeCameraIntrinsics)
     ASSERT_TRUE(back.notTooFar(back1, 1e-4));
 }
 
+
+TEST(Cameramodel, testDirProjection)
+{
+    PinholeCameraIntrinsics pinhole(Vector2dd(640.0, 480.0), degToRad(60.0));
+    CameraModel model(pinhole, CameraLocationData(Vector3dd(100,100,100)));
+
+    Vector2dd pixel(100, 100);
+    Ray3d     ray    = model.rayFromPixel(pixel);
+    Vector3dd dir    = model.dirFromPixel(pixel);
+    Vector2dd pixel1 = model.pixelFromDir(dir);
+    Vector2dd pixel2 = model.pixelFromDir(ray.a);
+
+    cout << "ray   :" << ray << endl;
+    cout << "dir   :" << dir << endl;
+
+    cout << "pixel :" << pixel  << endl;
+    cout << "pixel1:" << pixel1 << endl;
+    cout << "pixel2:" << pixel2 << endl;
+
+    ASSERT_TRUE(pixel.notTooFar(pixel1));
+    ASSERT_TRUE(pixel.notTooFar(pixel2));
+}
 
 TEST(Cameramodel, testViewport)
 {

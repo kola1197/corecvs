@@ -16,8 +16,8 @@
 
 #define     CORE_COUNT_OF(arr)          (sizeof(arr) / sizeof((arr)[0]))
 
-#define     CORE_CLEAR_MEMORY(pm, sz)   memset(pm, 0x00, sz)
-#define     CORE_FILL_MEMORY( pm, sz)   memset(pm, 0xFF, sz)
+#define     CORE_CLEAR_MEMORY(pm, sz)   memset((void *)pm, 0x00, sz)
+#define     CORE_FILL_MEMORY( pm, sz)   memset((void *)pm, 0xFF, sz)
 #define     CORE_CLEAR_STRUCT(obj)      CORE_CLEAR_MEMORY(&(obj), sizeof(obj))
 
 /* TODO: try to use std offsetof() while it's present. */
@@ -400,18 +400,20 @@ inline void * __CRTDECL operator new(size_t _Size) {
 
 /** Invite support of the file system */
 
-#if defined(__GNUC__)
-# if __cplusplus >= 201703L
-#  include <filesystem>
-   namespace fs = std::filesystem;
+#if WITH_STD_FILESYSTEM
+# if defined(__GNUC__)
+#  if __cplusplus >= 201703L
+#   include <filesystem>
+    namespace fs = std::filesystem;
+#  else
+#   include <experimental/filesystem>
+    namespace fs = std::experimental::filesystem;
+#  endif
 # else
-#  include <experimental/filesystem>
-   namespace fs = std::experimental::filesystem;
-# endif
-#else
-# ifdef _MSC_VER
-#  include <filesystem>
-   namespace fs = std::tr2::sys;
+#  ifdef _MSC_VER
+#   include <filesystem>
+    namespace fs = std::tr2::sys;
+#  endif
 # endif
 #endif
 

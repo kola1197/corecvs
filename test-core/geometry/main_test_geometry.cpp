@@ -23,7 +23,7 @@
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/geometry/convexPolyhedron.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #include "core/geometry/kdtree.h"
 
@@ -102,6 +102,34 @@ TEST(Geometry, KDTreePredicate)
         double gotDiff = !(*res - query);
         ASSERT_LE(std::abs(1.0 - minDiff / gotDiff), 1e-9);
     }
+}
+
+
+TEST(Geometry, testTexProg)
+{
+    Vector2dd v1(100, 0  );
+    Vector2dd v2(100, 100);
+
+    Matrix22 m(
+        v1.x(), v2.x(),
+        v1.y(), v2.y());
+
+    /* ==== */
+    cout << m * Vector2dd(1, 0) << endl;
+    cout << m * Vector2dd(0, 1) << endl;
+    cout << "Ok:" << endl;
+    cout << m.inverted() * m * Vector2dd(1, 0) << endl;
+    cout << m.inverted() * m * Vector2dd(0, 1) << endl;
+
+    /* ==== */
+    cout << "Ok:" << endl;
+
+    Vector2dd p1(100, 0);
+    Vector2dd p2(100, 100);
+
+    cout << m.inverted() * p1 << endl;
+    cout << m.inverted() * p2 << endl;
+
 }
 
 TEST(Geometry, testPolygonInside)

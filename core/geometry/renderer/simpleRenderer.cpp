@@ -1,5 +1,5 @@
 #include "core/geometry/renderer/simpleRenderer.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/geometry/renderer/attributedTriangleSpanIterator.h"
@@ -88,7 +88,10 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
         for(size_t p = 0; p < mesh->vertexes.size(); p++)
         {
             Vector2dd position = (modelviewMatrix * mesh->vertexes[p]).project();
-            cout << "SimpleRenderer::render(): " << mesh->vertexes[p] << " => " << position  << endl;
+
+            if (trace) {
+                cout << "SimpleRenderer::render(): " << mesh->vertexes[p] << " => " << position  << endl;
+            }
 
             RGBColor color = RGBColor::Red();
             if (mesh->hasColor) {
